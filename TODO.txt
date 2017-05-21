@@ -1,0 +1,11 @@
+Todo list:
+    Safeguard in Position controller
+    real cli debug
+    period dependency
+    task time consumption (moy, max, ...)
+    communication class
+    i2c driver
+    uart driver write/read via memory buffer or dma
+    fix gpio_led crash
+    add non volatile configuration
+    secure shared variable by mutex
