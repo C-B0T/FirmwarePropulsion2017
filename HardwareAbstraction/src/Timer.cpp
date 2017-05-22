@@ -19,12 +19,13 @@ using namespace Utils;
 #define TIMER_COUNTER_MAX_VALUE (65535)	/**< 16-bit timer max value */
 
 // TIM4
-#define TIMER0_TIMER			(TIM4)
+#define TIMER0_TIMER			(TIM5)
 #define TIMER0_PERIOD_US		(10000u)
 #define TIMER0_FREQUENCY		(1000000/TIMER0_PERIOD_US)
-#define TIMER0_TIMER_FREQ		(SystemCoreClock / 2)	// TIM4 clock is derivated from APB1 clock
-#define TIMER0_INT_CHANNEL		(TIM4_IRQn)
+#define TIMER0_TIMER_FREQ		(SystemCoreClock / 4)	// TIM5 clock is derivated from APB1 clock
+#define TIMER0_INT_CHANNEL		(TIM5_IRQn)
 #define TIMER0_INT_PRIORITY		(0u)
+#define TIMER0_INT_HANDLER		(TIM4_IRQHandler)
 
 /*----------------------------------------------------------------------------*/
 /* Private Members                                                            */
@@ -215,7 +216,7 @@ extern "C"
 	/**
 	 * @brief TIM4 Interrupt Handler
 	 */
-	void TIM4_IRQHandler(void)
+	void TIMER0_INT_HANDLER(void)
 	{
 		if(TIM_GetFlagStatus(TIM4, TIM_FLAG_Update) == SET)
 		{

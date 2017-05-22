@@ -15,7 +15,7 @@ using namespace HAL;
 /* Definitions                                                                */
 /*----------------------------------------------------------------------------*/
 
-// TIM5_CH1/CH2
+// TIM2_CH1/CH2
 #define ENC0_CH_A_PORT			(GPIOA)
 #define ENC0_CH_A_PIN			(GPIO_Pin_6)
 #define ENC0_CH_A_PINSOURCE		(GPIO_PinSource6)
@@ -29,7 +29,7 @@ using namespace HAL;
 #define ENC0_INT_PRIORITY		(0u)
 #define ENC0_INT_HANDLER		(TIM3_IRQHandler)
 
-// TIM8_CH1/CH2
+// TIM3_CH1/CH2
 #define ENC1_CH_A_PORT			(GPIOA)
 #define ENC1_CH_A_PIN			(GPIO_Pin_0)
 #define ENC1_CH_A_PINSOURCE		(GPIO_PinSource0)
