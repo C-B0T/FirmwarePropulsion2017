@@ -768,7 +768,7 @@ namespace Communication
 				_decode_Prop_Rotate(frame, &this->Param);
 				break;
 			case MSG_TYPE_PROP_SET_ANGLE:
-				_decode_Prop_SetState(frame, &this->Param);
+				_decode_Prop_SetAngle(frame, &this->Param);
 				break;
 			case MSG_TYPE_PROP_SET_POSITION:
 				_decode_Prop_SetPosition(frame, &this->Param);

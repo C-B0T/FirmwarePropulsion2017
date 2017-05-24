@@ -125,7 +125,7 @@ static void _hardwareInit (enum I2CSlave::ID id)
 
 	I2C_Init(i2c.I2C.BUS, &I2CStruct);
 
-	I2C_ITConfig(i2c.I2C.BUS, I2C_IT_EVT | I2C_IT_BUF | I2C_IT_ERR, ENABLE);
+	I2C_ITConfig(i2c.I2C.BUS, I2C_IT_EVT | /*I2C_IT_BUF |*/ I2C_IT_ERR, ENABLE);
 	I2C_GeneralCallCmd(i2c.I2C.BUS, ENABLE);
 	I2C_CalculatePEC(i2c.I2C.BUS, ENABLE);
 	I2C_Cmd(i2c.I2C.BUS, ENABLE);
@@ -236,7 +236,7 @@ namespace HAL
 		portENTER_CRITICAL();
 
 		// Disable I2C interrupt to avoid ACK failure interrupt when master will NAK at the end of the transaction
-		I2C_ITConfig(this->def.I2C.BUS, I2C_IT_EVT | I2C_IT_BUF | I2C_IT_ERR, DISABLE);
+		I2C_ITConfig(this->def.I2C.BUS, I2C_IT_EVT | /*I2C_IT_BUF |*/ I2C_IT_ERR, DISABLE);
 
 		// Wait read event
 		if(_waitEvent(this->def.I2C.BUS, I2C_EVENT_SLAVE_TRANSMITTER_ADDRESS_MATCHED)!= SUCCESS)
@@ -277,7 +277,7 @@ namespace HAL
 
 		// Clear AF bit and re-enable error interrupt
 		I2C_ClearFlag(this->def.I2C.BUS, I2C_FLAG_AF);
-		I2C_ITConfig(this->def.I2C.BUS, I2C_IT_EVT | I2C_IT_BUF | I2C_IT_ERR, ENABLE);
+		I2C_ITConfig(this->def.I2C.BUS, I2C_IT_EVT | /*I2C_IT_BUF |*/ I2C_IT_ERR, ENABLE);
 
 		portEXIT_CRITICAL();
 
@@ -331,13 +331,13 @@ namespace HAL
 
 				if(this->buffer.frame[this->buffer.wrIndex].Type == I2C_FRAME_TYPE_READ)
 				{
-					I2C_ITConfig(this->def.I2C.BUS, I2C_IT_BUF, DISABLE);
+					//I2C_ITConfig(this->def.I2C.BUS, I2C_IT_BUF, DISABLE);
 
 					this->DataRequest();
 				}
 				else
 				{
-					I2C_ITConfig(this->def.I2C.BUS, I2C_IT_BUF, ENABLE);
+					//I2C_ITConfig(this->def.I2C.BUS, I2C_IT_BUF, ENABLE);
 				}
 
 			}

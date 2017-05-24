@@ -16,7 +16,7 @@
 
 enum ModuleID
 {
-	ModuleID_General		=	0x00u,
+	ModuleID_Firmware		=	0x00u,
 	ModuleID_Prop			=	0x10u,
 	ModuleID_Servo			=	0x20u,
 	ModuleID_MPP			=	0x30u,

@@ -6,6 +6,7 @@
  */
 
 #include "ModuleFirmware.hpp"
+#include "ModulesDef.h"
 #include <stddef.h>
 
 // FreeRTOS API
@@ -64,7 +65,12 @@ ModuleFirmware* ModuleFirmware::GetInstance()
 
 ModuleFirmware::ModuleFirmware()
 {
+	this->id = ModuleID_Firmware;
+	this->action.status = ModuleActionStatus_Idle;
+
+	// Create Com Handler
     this->comHandler = CommunicationHandler::GetInstance();
+
 
     // Create event
     _eventHandle = xEventGroupCreate();
@@ -127,6 +133,12 @@ void ModuleFirmware::TaskHandler (void)
             {
                 this->ActionEnded();
             }
+
+            // module is idle
+			if(error == NO_ERROR)
+			{
+				this->action.status = ModuleActionStatus_Idle;
+			}
         }
 
         error = NO_ERROR;
@@ -182,6 +194,11 @@ int32_t ModuleFirmware::Ping ()
 
     // 2. Send report
     error = this->comHandler->Write(&this->report);
+
+    if(error > 0)
+    {
+    	error = NO_ERROR;
+    }
 
     return error;
 }

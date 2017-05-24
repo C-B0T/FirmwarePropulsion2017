@@ -182,7 +182,7 @@ ModuleManager* Controller::FindModule(enum ModuleID moduleID)
     // 1. Search module in module list with std:find_if and lambda function
     auto it = std::find_if(this->moduleList.begin(),
                            this->moduleList.end(),
-                           [moduleID](ModuleManager* obj){return obj->GetID() == (uint32_t)moduleID;} );
+                           [&](ModuleManager* obj){return obj->GetID() == (uint32_t)moduleID;} );
 
     // 2. if module found, return it
     if(it != this->moduleList.end())
