@@ -15,27 +15,27 @@ using namespace HAL;
 /* Definitions                                                                */
 /*----------------------------------------------------------------------------*/
 
-// TIM2_CH1
-#define PWM0_IO_PORT		(GPIOA)
-#define PWM0_IO_PIN			(GPIO_Pin_0)
-#define PWM0_IO_PINSOURCE	(GPIO_PinSource0)
-#define PWM0_IO_AF			(GPIO_AF_TIM2)
+// TIM4_CH1
+#define PWM0_IO_PORT		(GPIOB)
+#define PWM0_IO_PIN			(GPIO_Pin_6)
+#define PWM0_IO_PINSOURCE	(GPIO_PinSource6)
+#define PWM0_IO_AF			(GPIO_AF_TIM4)
 #define PWM0_FREQ			(10000)
 #define PWM0_DUTYCYCLE		(0.5f)
-#define PWM0_TIMER			(TIM2)
+#define PWM0_TIMER			(TIM4)
 #define PWM0_TIMER_CHANNEL	(TIM_Channel_1)
-#define PWM0_TIMER_FREQ		(SystemCoreClock / 2)	// TIM2 clock is derivated from APB1 clock
+#define PWM0_TIMER_FREQ		(SystemCoreClock / 4)	// TIM4 clock is derivated from APB1 clock
 
-// TIM2_CH3
-#define PWM1_IO_PORT		(GPIOA)
-#define PWM1_IO_PIN			(GPIO_Pin_2)
-#define PWM1_IO_PINSOURCE	(GPIO_PinSource2)
-#define PWM1_IO_AF			(GPIO_AF_TIM2)
+// TIM4_CH4
+#define PWM1_IO_PORT		(GPIOB)
+#define PWM1_IO_PIN			(GPIO_Pin_9)
+#define PWM1_IO_PINSOURCE	(GPIO_PinSource9)
+#define PWM1_IO_AF			(GPIO_AF_TIM4)
 #define PWM1_FREQ			(10000)
 #define PWM1_DUTYCYCLE		(0.5f)
-#define PWM1_TIMER			(TIM2)
-#define PWM1_TIMER_CHANNEL	(TIM_Channel_3)
-#define PWM1_TIMER_FREQ		(SystemCoreClock / 2)	// TIM2 clock is derivated from APB1 clock
+#define PWM1_TIMER			(TIM4)
+#define PWM1_TIMER_CHANNEL	(TIM_Channel_4)
+#define PWM1_TIMER_FREQ		(SystemCoreClock / 4)	// TIM4 clock is derivated from APB1 clock
 
 /*----------------------------------------------------------------------------*/
 /* Private Members                                                            */

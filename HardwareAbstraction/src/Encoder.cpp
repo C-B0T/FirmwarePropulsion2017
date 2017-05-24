@@ -15,31 +15,33 @@ using namespace HAL;
 /* Definitions                                                                */
 /*----------------------------------------------------------------------------*/
 
-// TIM5_CH1/CH2
-#define ENC0_CH_A_PORT			(GPIOH)
-#define ENC0_CH_A_PIN			(GPIO_Pin_10)
-#define ENC0_CH_A_PINSOURCE		(GPIO_PinSource10)
-#define ENC0_CH_B_PORT			(GPIOH)
-#define ENC0_CH_B_PIN			(GPIO_Pin_11)
-#define ENC0_CH_B_PINSOURCE		(GPIO_PinSource11)
-#define ENC0_IO_AF				(GPIO_AF_TIM5)
+// TIM2_CH1/CH2
+#define ENC0_CH_A_PORT			(GPIOA)
+#define ENC0_CH_A_PIN			(GPIO_Pin_6)
+#define ENC0_CH_A_PINSOURCE		(GPIO_PinSource6)
+#define ENC0_CH_B_PORT			(GPIOA)
+#define ENC0_CH_B_PIN			(GPIO_Pin_7)
+#define ENC0_CH_B_PINSOURCE		(GPIO_PinSource7)
+#define ENC0_IO_AF				(GPIO_AF_TIM3)
 #define ENC0_RELOAD_VALUE		(4095)			// Number of steps per encoder turn minus one
-#define ENC0_TIMER				(TIM5)
-#define ENC0_INT_CHANNEL		(TIM5_IRQn)
+#define ENC0_TIMER				(TIM3)
+#define ENC0_INT_CHANNEL		(TIM3_IRQn)
 #define ENC0_INT_PRIORITY		(0u)
+#define ENC0_INT_HANDLER		(TIM3_IRQHandler)
 
-// TIM8_CH1/CH2
-#define ENC1_CH_A_PORT			(GPIOI)
-#define ENC1_CH_A_PIN			(GPIO_Pin_5)
-#define ENC1_CH_A_PINSOURCE		(GPIO_PinSource5)
-#define ENC1_CH_B_PORT			(GPIOI)
-#define ENC1_CH_B_PIN			(GPIO_Pin_6)
-#define ENC1_CH_B_PINSOURCE		(GPIO_PinSource6)
-#define ENC1_IO_AF				(GPIO_AF_TIM8)
+// TIM3_CH1/CH2
+#define ENC1_CH_A_PORT			(GPIOA)
+#define ENC1_CH_A_PIN			(GPIO_Pin_0)
+#define ENC1_CH_A_PINSOURCE		(GPIO_PinSource0)
+#define ENC1_CH_B_PORT			(GPIOA)
+#define ENC1_CH_B_PIN			(GPIO_Pin_1)
+#define ENC1_CH_B_PINSOURCE		(GPIO_PinSource1)
+#define ENC1_IO_AF				(GPIO_AF_TIM2)
 #define ENC1_RELOAD_VALUE		(4095)			// Number of steps per encoder turn minus one
-#define ENC1_TIMER				(TIM8)
-#define ENC1_INT_CHANNEL		(TIM8_UP_TIM13_IRQn)
+#define ENC1_TIMER				(TIM2)
+#define ENC1_INT_CHANNEL		(TIM2_IRQn)
 #define ENC1_INT_PRIORITY		(0u)
+#define ENC1_INT_HANDLER		(TIM2_IRQHandler)
 
 #define TIM_FLAG_OVERFLOW		(1u << 0u)
 #define TIM_FLAG_UNDERFLOW		(1u << 1u)
@@ -243,15 +245,15 @@ extern "C"
 	/**
 	 * @brief Encoder 0 interrupt handler
 	 */
-	void TIM5_IRQHandler (void)
+	void ENC0_INT_HANDLER (void)
 	{
 		uint16_t flag = 0u;
 
-		if(TIM_GetFlagStatus(TIM5, TIM_FLAG_Update) == SET)
+		if(TIM_GetFlagStatus(ENC0_TIMER, TIM_FLAG_Update) == SET)
 		{
-			flag = TIM_GetCounterDirection(TIM5);
+			flag = TIM_GetCounterDirection(ENC0_TIMER);
 
-			TIM_ClearFlag(TIM5, TIM_FLAG_Update);
+			TIM_ClearFlag(ENC0_TIMER, TIM_FLAG_Update);
 
 			if(_enc[Encoder::ENCODER0] != NULL)
 			{
@@ -263,15 +265,15 @@ extern "C"
 	/**
 	 * @brief Encoder 1 interrupt handler
 	 */
-	void TIM8_UP_TIM13_IRQHandler (void)
+	void ENC1_INT_HANDLER (void)
 	{
 		uint16_t flag = 0u;
 
-		if(TIM_GetFlagStatus(TIM8, TIM_FLAG_Update) == SET)
+		if(TIM_GetFlagStatus(ENC1_TIMER, TIM_FLAG_Update) == SET)
 		{
-			flag = TIM_GetCounterDirection(TIM8);
+			flag = TIM_GetCounterDirection(ENC1_TIMER);
 
-			TIM_ClearFlag(TIM8, TIM_FLAG_Update);
+			TIM_ClearFlag(ENC1_TIMER, TIM_FLAG_Update);
 
 			if(_enc[Encoder::ENCODER1] != NULL)
 			{

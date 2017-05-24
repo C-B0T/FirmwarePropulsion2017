@@ -29,12 +29,12 @@ using namespace HAL;
 #define SERIAL_BUFFER_SIZE		(128u)
 
 // UART1
-#define SERIAL0_RX_PORT			(GPIOB)
-#define SERIAL0_RX_PIN			(GPIO_Pin_7)
-#define SERIAL0_RX_PINSOURCE	(GPIO_PinSource7)
-#define SERIAL0_TX_PORT			(GPIOB)
-#define SERIAL0_TX_PIN			(GPIO_Pin_6)
-#define SERIAL0_TX_PINSOURCE	(GPIO_PinSource6)
+#define SERIAL0_RX_PORT			(GPIOA)
+#define SERIAL0_RX_PIN			(GPIO_Pin_10)
+#define SERIAL0_RX_PINSOURCE	(GPIO_PinSource10)
+#define SERIAL0_TX_PORT			(GPIOA)
+#define SERIAL0_TX_PIN			(GPIO_Pin_9)
+#define SERIAL0_TX_PINSOURCE	(GPIO_PinSource9)
 #define SERIAL0_IO_AF			(GPIO_AF_USART1)
 #define SERIAL0_BAUDRATE		(115200u)
 #define SERIAL0_PORT			(USART1)

@@ -15,66 +15,66 @@ using namespace HAL;
 /* Definitions                                                                */
 /*----------------------------------------------------------------------------*/
 
-// DIG_IN2
-#define GPIO0_PORT				(GPIOF)
-#define GPIO0_PIN				(GPIO_Pin_7)
+// DIG_IN2 - MOT0_DIAG
+#define GPIO0_PORT				(GPIOC)
+#define GPIO0_PIN				(GPIO_Pin_5)
 #define GPIO0_MODE				(GPIO_Mode_IN)
-#define GPIO0_INT_PORTSOURCE	(EXTI_PortSourceGPIOF)
-#define GPIO0_INT_PINSOURCE		(EXTI_PinSource7)
-#define GPIO0_INT_LINE			(EXTI_Line7)
+#define GPIO0_INT_PORTSOURCE	(EXTI_PortSourceGPIOC)
+#define GPIO0_INT_PINSOURCE		(EXTI_PinSource5)
+#define GPIO0_INT_LINE			(EXTI_Line5)
 #define GPIO0_INT_TRIGGER		(EXTI_Trigger_Falling)
 #define GPIO0_INT_CHANNEL		(EXTI9_5_IRQn)
 #define GPIO0_INT_PRIORITY		(0u)
 
-// PWM_OUT1
-#define GPIO1_PORT				(GPIOA)
-#define GPIO1_PIN				(GPIO_Pin_1)
+// PWM_OUT1 - MOT0_DIR
+#define GPIO1_PORT				(GPIOB)
+#define GPIO1_PIN				(GPIO_Pin_7)
 #define GPIO1_MODE				(GPIO_Mode_OUT)
 
-// DIG_OUT7
-#define GPIO2_PORT				(GPIOH)
-#define GPIO2_PIN				(GPIO_Pin_2)
+// DIG_OUT7 - MOT0_BRAKE
+#define GPIO2_PORT				(GPIOA)
+#define GPIO2_PIN				(GPIO_Pin_3)
 #define GPIO2_MODE				(GPIO_Mode_OUT)
 
-// DIG_IN3
-#define GPIO3_PORT				(GPIOF)
-#define GPIO3_PIN				(GPIO_Pin_9)
+// DIG_IN3 - MOT1_DIAG
+#define GPIO3_PORT				(GPIOC)
+#define GPIO3_PIN				(GPIO_Pin_0)
 #define GPIO3_MODE				(GPIO_Mode_IN)
-#define GPIO3_INT_PORTSOURCE	(EXTI_PortSourceGPIOF)
-#define GPIO3_INT_PINSOURCE		(EXTI_PinSource9)
-#define GPIO3_INT_LINE			(EXTI_Line9)
+#define GPIO3_INT_PORTSOURCE	(EXTI_PortSourceGPIOC)
+#define GPIO3_INT_PINSOURCE		(EXTI_PinSource0)
+#define GPIO3_INT_LINE			(EXTI_Line0)
 #define GPIO3_INT_TRIGGER		(EXTI_Trigger_Falling)
-#define GPIO3_INT_CHANNEL		(EXTI9_5_IRQn)
+#define GPIO3_INT_CHANNEL		(EXTI0_IRQn)
 #define GPIO3_INT_PRIORITY		(0u)
 
-// PWM_OUT3
-#define GPIO4_PORT				(GPIOA)
-#define GPIO4_PIN				(GPIO_Pin_3)
+// PWM_OUT3 - MOT1_DIR
+#define GPIO4_PORT				(GPIOB)
+#define GPIO4_PIN				(GPIO_Pin_8)
 #define GPIO4_MODE				(GPIO_Mode_OUT)
 
-// DIG_OUT8
-#define GPIO5_PORT				(GPIOH)
-#define GPIO5_PIN				(GPIO_Pin_3)
+// DIG_OUT8 - MOT1_BRAKE
+#define GPIO5_PORT				(GPIOC)
+#define GPIO5_PIN				(GPIO_Pin_13)
 #define GPIO5_MODE				(GPIO_Mode_OUT)
 
 // LED1
-#define GPIO6_PORT				(GPIOI)
-#define GPIO6_PIN				(GPIO_Pin_8)
+#define GPIO6_PORT				(GPIOB)
+#define GPIO6_PIN				(GPIO_Pin_12)
 #define GPIO6_MODE				(GPIO_Mode_OUT)
 
 // LED2
-#define GPIO7_PORT				(GPIOI)
-#define GPIO7_PIN				(GPIO_Pin_9)
+#define GPIO7_PORT				(GPIOB)
+#define GPIO7_PIN				(GPIO_Pin_13)
 #define GPIO7_MODE				(GPIO_Mode_OUT)
 
 // LED3
-#define GPIO8_PORT				(GPIOI)
-#define GPIO8_PIN				(GPIO_Pin_10)
+#define GPIO8_PORT				(GPIOB)
+#define GPIO8_PIN				(GPIO_Pin_14)
 #define GPIO8_MODE				(GPIO_Mode_OUT)
 
 // LED4
-#define GPIO9_PORT				(GPIOI)
-#define GPIO9_PIN				(GPIO_Pin_11)
+#define GPIO9_PORT				(GPIOB)
+#define GPIO9_PIN				(GPIO_Pin_15)
 #define GPIO9_MODE				(GPIO_Mode_OUT)
 
 /*----------------------------------------------------------------------------*/
@@ -309,23 +309,30 @@ namespace HAL
 extern "C"
 {
 	/**
+	 * @brief INT Line 0 Interrupt Handler
+	 */
+	void EXTI0_IRQHandler (void)
+	{
+		if(EXTI_GetFlagStatus(GPIO3_INT_LINE) == SET)
+		{
+			EXTI_ClearFlag(GPIO3_INT_LINE);
+
+			GPIO* gpio = GPIO::GetInstance(GPIO::GPIO3);
+
+			gpio->INTERNAL_InterruptCallback();
+		}
+	}
+
+	/**
 	 * @brief INT Line 9 to 5 Interrupt Handler
 	 */
-	void INT9_5_IRQHandler(void)
+	void EXTI9_5_IRQHandler(void)
 	{
 		if(EXTI_GetFlagStatus(GPIO0_INT_LINE) == SET)
 		{
 			EXTI_ClearFlag(GPIO0_INT_LINE);
 
 			GPIO* gpio = GPIO::GetInstance(GPIO::GPIO0);
-
-			gpio->INTERNAL_InterruptCallback();
-		}
-		else if(EXTI_GetFlagStatus(GPIO3_INT_LINE) == SET)
-		{
-			EXTI_ClearFlag(GPIO3_INT_LINE);
-
-			GPIO* gpio = GPIO::GetInstance(GPIO::GPIO3);
 
 			gpio->INTERNAL_InterruptCallback();
 		}
