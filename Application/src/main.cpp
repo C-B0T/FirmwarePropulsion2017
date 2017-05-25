@@ -157,6 +157,72 @@ void TASKHANDLER_Test (void * obj)
 }
 
 
+void TASKHANDLER_TestEncoder (void * obj)
+{
+	Encoder* leftEncoder = Encoder::GetInstance(Encoder::ENCODER0);
+	Encoder* rightEncoder = Encoder::GetInstance(Encoder::ENCODER1);
+
+	int32_t leftValue = 0, rightValue = 0;
+
+	while(1)
+	{
+		leftValue = leftEncoder->GetRelativeValue();
+		rightValue = rightEncoder->GetRelativeValue();
+
+		printf("%d;%d\r\n", leftValue, rightValue);
+
+		vTaskDelay(100);
+	}
+}
+
+void TASKHANDLER_TestBrushlessMotor (void * obj)
+{
+	BrushlessMotorDriver* leftMotor = BrushlessMotorDriver::GetInstance(BrushlessMotorDriver::DRIVER0);
+	BrushlessMotorDriver* rightMotor = BrushlessMotorDriver::GetInstance(BrushlessMotorDriver::DRIVER1);
+
+	float32_t speed = 0.0f;
+
+	leftMotor->SetSpeed(speed);
+	rightMotor->SetSpeed(speed);
+
+	leftMotor->SetDirection(BrushlessMotorDriver::FORWARD);
+	rightMotor->SetDirection(BrushlessMotorDriver::FORWARD);
+
+	leftMotor->Move();
+	rightMotor->Move();
+
+	while(1)
+	{
+		speed += 0.1;
+
+		leftMotor->SetSpeed(speed);
+		rightMotor->SetSpeed(speed);
+
+		if(speed >= 1.0)
+		{
+			leftMotor->Brake();
+			rightMotor->Brake();
+
+			speed = 0.0f;
+
+			if(leftMotor->GetDirection() == BrushlessMotorDriver::FORWARD)
+			{
+				leftMotor->SetDirection(BrushlessMotorDriver::REVERSE);
+				rightMotor->SetDirection(BrushlessMotorDriver::REVERSE);
+			}
+			else
+			{
+				leftMotor->SetDirection(BrushlessMotorDriver::FORWARD);
+				rightMotor->SetDirection(BrushlessMotorDriver::FORWARD);
+			}
+
+			vTaskDelay(1000);
+		}
+
+		vTaskDelay(200);
+	}
+}
+
 /**
  * @brief Main
  */
@@ -176,7 +242,7 @@ int main(void)
 //    printf("\r\n\r\nS/0 CarteProp Firmware V0.1 (" __DATE__ " - " __TIME__ ")\r\n");
 
     // Create Test task
-    xTaskCreate(&TASKHANDLER_Test,
+    xTaskCreate(&TASKHANDLER_TestEncoder,
                 "Test Task",
                 128,
                 NULL,
