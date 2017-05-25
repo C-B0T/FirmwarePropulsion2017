@@ -413,7 +413,7 @@ namespace Communication
 		 * @param frame : Encoded I2C frame
 		 * @return 0 if no error, < 0 else
 		 */
-		int32_t	Encode (uint8_t* data, uint8_t length);
+		int32_t	Encode (uint8_t* data);
 
 		/**
 		 * @brief Decode message

@@ -11,6 +11,7 @@
 #include <stddef.h>
 #include "Message.hpp"
 #include <string>
+#include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -20,11 +21,15 @@
 
 #define MSG_OPCODE_FW						("F")
 #define MSG_OPCODE_PROP						("P")
+#define MSG_OPCODE_SERVO					("S")
+#define MSG_OPCODE_MPP						("M")
+#define MSG_OPCODE_GPIO						("I")
+#define MSG_OPCODE_BAR						("B")
 
 #define MSG_OPCODE_FW_RESET					("FRST")
 #define MSG_OPCODE_FW_PING					("FPNG")
 
-#define MSG_OPCODE_PROP_INIT				("PINIT")
+#define MSG_OPCODE_PROP_INIT				("PINI")
 #define MSG_OPCODE_PROP_GETPOSITION			("PGPO")
 #define MSG_OPCODE_PROP_GOTOXY				("PGXY")
 #define MSG_OPCODE_PROP_GOLINEAR			("PGLI")
@@ -34,6 +39,30 @@
 #define MSG_OPCODE_PROP_STOP				("PSTP")
 #define MSG_OPCODE_PROP_SETSTATE			("PSST")
 #define MSG_OPCODE_PROP_GETSTATUS			("PGST")
+
+#define MSG_OPCODE_SERVO_INIT				("SINI")
+#define MSG_OPCODE_SERVO_SETANGLE			("SSAN")
+#define MSG_OPCODE_SERVO_SETSPEED			("SSPD")
+#define MSG_OPCODE_SERVO_GETSTATUS			("SGST")
+
+#define MSG_OPCODE_MPP_INIT					("MINI")
+#define MSG_OPCODE_MPP_SETSPEED				("MSPD")
+#define MSG_OPCODE_MPP_SETSTATE				("MSST")
+#define MSG_OPCODE_MPP_MOVE					("MMOV")
+#define MSG_OPCODE_MPP_RUN					("MRUN")
+#define MSG_OPCODE_MPP_GETSTATUS			("MGST")
+
+#define MSG_OPCODE_GPIO_INIT				("IINI")
+#define MSG_OPCODE_GPIO_READALLDIGIN		("IRDI")
+#define MSG_OPCODE_GPIO_READALLANIN			("IRAI")
+#define MSG_OPCODE_GPIO_GETOUTPUTS			("IGOT")
+#define MSG_OPCODE_GPIO_SETOUTPUTS			("ISOT")
+#define MSG_OPCODE_GPIO_GETSTATUS			("IGST")
+
+#define MSG_OPCODE_BAR_INIT					("BINI")
+#define MSG_OPCODE_BAR_MOVEINDEX			("BMIX")
+#define MSG_OPCODE_BAR_GETSTATUS			("BGST")
+
 
 #define MSG_FRAME_INDEX_OPCODE		(0u)
 #define MSG_FRAME_INDEX_NB_DATA		(1u)
@@ -147,6 +176,7 @@ static void _decode_Reset (std::string s, MSG_PARAM * param)
 	s.erase(0,4);
 }
 
+
 static void _decode_BootMode (std::string s, MSG_PARAM * param)
 {
 //	assert(frame != NULL);
@@ -158,6 +188,7 @@ static void _decode_BootMode (std::string s, MSG_PARAM * param)
 //	param->BootMode.key	|=	((uint32_t)frame->Data[MSG_FRAME_INDEX_FIRST_DATA + 3u] << 24u);
 }
 
+
 static void _decode_ChangeAddr (std::string s, MSG_PARAM * param)
 {
 //	assert(frame != NULL);
@@ -165,6 +196,7 @@ static void _decode_ChangeAddr (std::string s, MSG_PARAM * param)
 //
 //	param->ChangeAddress.addr	 =	(uint8_t)frame->Data[MSG_FRAME_INDEX_FIRST_DATA];
 }
+
 
 static void _decode_Prop_Init (std::string s, MSG_PARAM * param)
 {
@@ -267,7 +299,6 @@ static void _decode_Servo_SetAngle (std::string s, MSG_PARAM * param)
 	param->Servo.SetAngle.angle	|=	((uint16_t)(atoi(s.c_str()) << 8u));
 	s.erase(0,4);
 }
-
 
 static void _decode_Servo_SetSpeed (std::string s, MSG_PARAM * param)
 {
@@ -402,12 +433,14 @@ static std::string _encode_Prop_GetPosition (MSG_PARAM * param)
 
 	std::string s(MSG_OPCODE_PROP_GETPOSITION);
 
-	sprintf(buffer, "04,%03d,%03d,%03d,%03d,%03d,%03d", (uint8_t)(param->Prop.GetPosition.posX & 0xFFu),
+	sprintf(buffer, "06,%03d,%03d,%03d,%03d,%03d,%03d", (uint8_t)(param->Prop.GetPosition.posX & 0xFFu),
 														((uint8_t)(param->Prop.GetPosition.posX >> 8u) & 0xFFu),
 														(uint8_t)(param->Prop.GetPosition.posY & 0xFFu),
 														((uint8_t)(param->Prop.GetPosition.posY >> 8u) & 0xFFu),
 														(uint8_t)(param->Prop.GetPosition.angle & 0xFFu),
 														((uint8_t)(param->Prop.GetPosition.angle >> 8u) & 0xFFu));
+
+	s.append(buffer);
 
 	return s;
 }
@@ -420,63 +453,127 @@ static std::string _encode_Prop_GetStatus (MSG_PARAM * param)
 
 	std::string s(MSG_OPCODE_PROP_GETSTATUS);
 
-	sprintf(buffer, "04,%03d,%03d", (uint8_t)(param->Prop.GetStatus.status & 0xFFu),
-														((uint8_t)(param->Prop.GetStatus.status >> 8u) & 0xFFu));
+	sprintf(buffer, "02,%03d,%03d", (uint8_t)(param->Prop.GetStatus.status & 0xFFu),
+									((uint8_t)(param->Prop.GetStatus.status >> 8u) & 0xFFu));
+
+	s.append(buffer);
 
 	return s;
 }
 
 static std::string _encode_Servo_GetStatus (MSG_PARAM * param)
 {
+	char buffer[32];
+
+	assert(param != NULL);
+
+	std::string s(MSG_OPCODE_SERVO_GETSTATUS);
+
+	sprintf(buffer, "02,%03d,%03d", (uint8_t)(param->Servo.GetStatus.status & 0xFFu),
+									((uint8_t)(param->Servo.GetStatus.status >> 8u) & 0xFFu));
+
+	s.append(buffer);
+
+	return s;
+}
+
+static std::string _encode_MPP_GetStatus (MSG_PARAM * param)
+{
+	char buffer[32];
+
+	assert(param != NULL);
+
+	std::string s(MSG_OPCODE_MPP_GETSTATUS);
+
+	sprintf(buffer, "02,%03d,%03d", (uint8_t)(param->MPP.GetStatus.status & 0xFFu),
+									((uint8_t)(param->MPP.GetStatus.status >> 8u) & 0xFFu));
+
+	s.append(buffer);
+
+	return s;
+}
+
+
+static std::string _encode_GPIO_ReadAllDigInput (MSG_PARAM * param)
+{
+	char buffer[32];
+
+	assert(param != NULL);
+
+	std::string s(MSG_OPCODE_GPIO_READALLDIGIN);
+
+	sprintf(buffer, "02,%03d,%03d", (uint8_t)(param->GPIO.ReadAllDigInput.inputs & 0xFFu),
+									((uint8_t)(param->GPIO.ReadAllDigInput.inputs >> 8u) & 0xFFu));
+
+	s.append(buffer);
+
+	return s;
+}
+
+
+static std::string _encode_GPIO_ReadAllAnInput(MSG_PARAM * param)
+{
 //	char buffer[32];
 //
 //	assert(param != NULL);
 //
-//	std::string s(MSG_OPCODE_SERVO_GETSTATUS);
+//	std::string s(MSG_OPCODE_GPIO_READALLDIGIN);
 //
-//	sprintf(buffer, "04,%03d,%03d", (uint8_t)(param->Prop.GetStatus.status & 0xFFu),
-//														((uint8_t)(param->Prop.GetStatus.status >> 8u) & 0xFFu));
+//	sprintf(buffer, "04,%03d,%03d", (uint8_t)(param->GPIO.ReadAllDigInput.inputs & 0xFFu),
+//									((uint8_t)(param->GPIO.ReadAllDigInput.inputs >> 8u) & 0xFFu));
 //
 //	return s;
 }
 
-static void _encode_MPP_GetStatus (std::string s, MSG_PARAM * param)
+
+static std::string _encode_GPIO_GetOutput (MSG_PARAM * param)
 {
-//	frame->Data[frame->Length++]	=	(uint8_t)(param->MPP.GetStatus.status & 0x00FFu);
-//	frame->Data[frame->Length++]	=	(uint8_t)((param->MPP.GetStatus.status >> 8u) & 0x00FFu);
+	char buffer[32];
+
+	assert(param != NULL);
+
+	std::string s(MSG_OPCODE_GPIO_GETOUTPUTS);
+
+	sprintf(buffer, "02,%03d,%03d", (uint8_t)(param->GPIO.Getoutput.outputs & 0xFFu),
+									((uint8_t)(param->GPIO.Getoutput.outputs >> 8u) & 0xFFu));
+
+	s.append(buffer);
+
+	return s;
 }
 
-static void _encode_GPIO_ReadAllDigInput (std::string s, MSG_PARAM * param)
+
+static std::string _encode_GPIO_GetStatus (MSG_PARAM * param)
 {
-//	frame->Data[frame->Length++]	=	(uint8_t)(param->GPIO.ReadAllDigInput.inputs & 0x00FFu);
-//	frame->Data[frame->Length++]	=	(uint8_t)((param->GPIO.ReadAllDigInput.inputs >> 8u) & 0x00FFu);
+	char buffer[32];
+
+	assert(param != NULL);
+
+	std::string s(MSG_OPCODE_GPIO_GETSTATUS);
+
+	sprintf(buffer, "02,%03d,%03d", (uint8_t)(param->GPIO.GetStatus.status & 0xFFu),
+									((uint8_t)(param->GPIO.GetStatus.status >> 8u) & 0xFFu));
+
+	s.append(buffer);
+
+	return s;
+
 }
 
-static void _encode_GPIO_ReadAllAnInput(std::string s, MSG_PARAM * param)
+static std::string _encode_BAR_GetStatus (MSG_PARAM * param)
 {
-	uint8_t i = 0u;
+	char buffer[32];
 
-	for(i=0u; i<MSG_PARAM_GPIO_MAX_ANALOG_INPUTS; i++)
-	{
-//		frame->Data[frame->Length++]	=	(uint8_t)(param->GPIO.ReadAllAnInput.input[i] & 0x00FFu);
-	}
-}
+	assert(param != NULL);
 
-static void _encode_GPIO_GetOutput (std::string s, MSG_PARAM * param)
-{
-//	frame->Data[frame->Length++]	=	(uint8_t)(param->GPIO.Getoutput.outputs & 0x00FFu);
-}
+	std::string s(MSG_OPCODE_BAR_GETSTATUS);
 
-static void _encode_GPIO_GetStatus (std::string s, MSG_PARAM * param)
-{
-//	frame->Data[frame->Length++]	=	(uint8_t)(param->GPIO.GetStatus.status & 0x00FFu);
-//	frame->Data[frame->Length++]	=	(uint8_t)((param->GPIO.GetStatus.status >> 8u) & 0x00FFu);
-}
+	sprintf(buffer, "02,%03d,%03d", (uint8_t)(param->Barillet.GetStatus.status & 0xFFu),
+									((uint8_t)(param->Barillet.GetStatus.status >> 8u) & 0xFFu));
 
-static void _encode_BAR_GetStatus (std::string s, MSG_PARAM * param)
-{
-//	frame->Data[frame->Length++]	=	(uint8_t)(param->Barillet.GetStatus.status & 0x00FFu);
-//	frame->Data[frame->Length++]	=	(uint8_t)((param->Barillet.GetStatus.status >> 8u) & 0x00FFu);
+	s.append(buffer);
+
+	return s;
 }
 
 /*----------------------------------------------------------------------------*/
@@ -530,125 +627,67 @@ namespace Communication
 		return rval;
 	}
 
-	int32_t Message::Encode(uint8_t* data, uint8_t length)
+	int32_t Message::Encode(uint8_t* data)
 	{
 		int32_t rval = 0;
+		std::string s;
 
-//		assert(frame != NULL);
-//
-//		// 1. Set Opcode field
-//		if(rval == NO_ERROR)
-//		{
-//			if(this->Type != MSG_TYPE_UNKNOWN)
-//			{
-//				frame->Length = MSG_FRAME_INDEX_OPCODE;
-//				frame->Data[frame->Length++]	=	(uint8_t)this->Type;
-//			}
-//			else
-//			{
-//				rval = MSG_ERROR_UNKNOWN_TYPE;
-//			}
-//		}
-//
-//		// 2. Set Nb Data field
-//		if(rval == NO_ERROR)
-//		{
-//			switch(this->Type)
-//			{
-//			case MSG_TYPE_FW_PING:
-//				frame->Data[frame->Length++]=	MSG_NB_DATA_ENCODE_FW_PING;
+		assert(data != NULL);
+
+		// 3. Encode data
+		if(rval == NO_ERROR)
+		{
+			switch(this->Type)
+			{
+			case MSG_TYPE_FW_PING:
+				s = _encode_Ping(&this->Param);
+				break;
+//			case MSG_TYPE_CHECKUP:
+//				frame->Data[frame->Length++]=	MSG_NB_DATA_ENCODE_CHECKUP;
 //				break;
-////			case MSG_TYPE_CHECKUP:
-////				frame->Data[frame->Length++]=	MSG_NB_DATA_ENCODE_CHECKUP;
-////				break;
-////			case MSG_TYPE_GET_DISTANCE:
-////				frame->Data[frame->Length++]=	MSG_NB_DATA_ENCODE_GET_DISTANCE;
-////				break;
-//
-//			case MSG_TYPE_PROP_GET_POSITION:
-//				frame->Data[frame->Length++]=	MSG_NB_DATA_ENCODE_PROP_GET_POSITION;
+//			case MSG_TYPE_GET_DISTANCE:
+//				frame->Data[frame->Length++]=	MSG_NB_DATA_ENCODE_GET_DISTANCE;
 //				break;
-//			case MSG_TYPE_PROP_GET_STATUS:
-//				frame->Data[frame->Length++]=	MSG_NB_DATA_ENCODE_PROP_GET_STATUS;
-//				break;
-//			case MSG_TYPE_SERVO_GET_STATUS:
-//				frame->Data[frame->Length++]=	MSG_NB_DATA_ENCODE_SERVO_GET_STATUS;
-//				break;
-//			case MSG_TYPE_MPP_GET_STATUS:
-//				frame->Data[frame->Length++]=	MSG_NB_DATA_ENCODE_MPP_GET_STATUS;
-//				break;
-//			case MSG_TYPE_GPIO_READ_ALL_DIG_IN:
-//				frame->Data[frame->Length++]=	MSG_NB_DATA_ENCODE_GPIO_READ_ALL_DIG_IN;
-//				break;
-//			case MSG_TYPE_GPIO_READ_ALL_AN_IN:
-//				frame->Data[frame->Length++]=	MSG_NB_DATA_ENCODE_GPIO_READ_ALL_AN_IN;
-//				break;
-//			case MSG_TYPE_GPIO_GET_OUTPUT:
-//				frame->Data[frame->Length++]=	MSG_NB_DATA_ENCODE_GPIO_GET_OUTPUTS;
-//				break;
-//			case MSG_TYPE_GPIO_GET_STATUS:
-//				frame->Data[frame->Length++]=	MSG_NB_DATA_ENCODE_GPIO_GET_STATUS;
-//				break;
-//			case MSG_TYPE_BAR_GET_STATUS:
-//				frame->Data[frame->Length++]=	MSG_NB_DATA_ENCODE_BAR_GET_STATUS;
-//				break;
-//
-//			// Other commands doesn't need an answer
-//			default:
-//				rval = MSG_ERROR_NO_ANSWER_NEEDED;
-//				break;
-//			}
-//		}
-//
-//		// 3. Encode data
-//		if(rval == NO_ERROR)
-//		{
-//			switch(this->Type)
-//			{
-//			case MSG_TYPE_FW_PING:
-//				_encode_Ping(frame, &this->Param);
-//				break;
-////			case MSG_TYPE_CHECKUP:
-////				frame->Data[frame->Length++]=	MSG_NB_DATA_ENCODE_CHECKUP;
-////				break;
-////			case MSG_TYPE_GET_DISTANCE:
-////				frame->Data[frame->Length++]=	MSG_NB_DATA_ENCODE_GET_DISTANCE;
-////				break;
-//
-//			case MSG_TYPE_PROP_GET_POSITION:
-//				_encode_Prop_GetPosition(frame, &this->Param);
-//				break;
-//			case MSG_TYPE_PROP_GET_STATUS:
-//				_encode_Prop_GetStatus(frame, &this->Param);
-//				break;
-//			case MSG_TYPE_SERVO_GET_STATUS:
-//				_encode_Servo_GetStatus(frame, &this->Param);
-//				break;
-//			case MSG_TYPE_MPP_GET_STATUS:
-//				_encode_MPP_GetStatus(frame, &this->Param);
-//				break;
-//			case MSG_TYPE_GPIO_READ_ALL_DIG_IN:
-//				_encode_GPIO_ReadAllDigInput(frame, &this->Param);
-//				break;
-//			case MSG_TYPE_GPIO_READ_ALL_AN_IN:
-//				_encode_GPIO_ReadAllAnInput(frame, &this->Param);
-//				break;
-//			case MSG_TYPE_GPIO_GET_OUTPUT:
-//				_encode_GPIO_GetOutput(frame, &this->Param);
-//				break;
-//			case MSG_TYPE_GPIO_GET_STATUS:
-//				_encode_GPIO_GetStatus(frame, &this->Param);
-//				break;
-//			case MSG_TYPE_BAR_GET_STATUS:
-//				_encode_BAR_GetStatus(frame, &this->Param);
-//				break;
-//
-//		// Other commands doesn't need an answer
-//		default:
-//			rval = MSG_ERROR_NO_ANSWER_NEEDED;
-//			break;
-//}
-//		}
+
+			case MSG_TYPE_PROP_GET_POSITION:
+				s = _encode_Prop_GetPosition(&this->Param);
+				break;
+			case MSG_TYPE_PROP_GET_STATUS:
+				s = _encode_Prop_GetStatus(&this->Param);
+				break;
+			case MSG_TYPE_SERVO_GET_STATUS:
+				s = _encode_Servo_GetStatus(&this->Param);
+				break;
+			case MSG_TYPE_MPP_GET_STATUS:
+				s = _encode_MPP_GetStatus(&this->Param);
+				break;
+			case MSG_TYPE_GPIO_READ_ALL_DIG_IN:
+				s = _encode_GPIO_ReadAllDigInput(&this->Param);
+				break;
+			case MSG_TYPE_GPIO_READ_ALL_AN_IN:
+				s = _encode_GPIO_ReadAllAnInput(&this->Param);
+				break;
+			case MSG_TYPE_GPIO_GET_OUTPUT:
+				s = _encode_GPIO_GetOutput(&this->Param);
+				break;
+			case MSG_TYPE_GPIO_GET_STATUS:
+				s = _encode_GPIO_GetStatus(&this->Param);
+				break;
+			case MSG_TYPE_BAR_GET_STATUS:
+				s = _encode_BAR_GetStatus(&this->Param);
+				break;
+
+			// Other commands doesn't need an answer
+			default:
+				rval = MSG_ERROR_NO_ANSWER_NEEDED;
+				break;
+			}
+		}
+
+		if(rval == NO_ERROR)
+		{
+			memcpy(data, s.c_str(), s.length());
+		}
 
 		return rval;
 	}
