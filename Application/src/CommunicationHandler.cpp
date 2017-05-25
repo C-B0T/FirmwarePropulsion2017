@@ -17,6 +17,9 @@
 /* Definitions                                                                */
 /*----------------------------------------------------------------------------*/
 
+#define COM_SOF		'<'
+#define COM_EOF		'>'
+
 #define COM_EVENT_DATA_RECEIVED		(0x01u)
 #define COM_EVENT_DATA_REQUESTED	(0x02u)
 #define COM_EVENT_ERROR_OCCURED		(0x04u)
@@ -90,11 +93,12 @@ namespace Communication
 		this->error = NO_ERROR;
 
 		// Create I2C bus
-		this->bus = HAL::I2CSlave::GetInstance(HAL::I2CSlave::I2C_SLAVE0);
+//		this->bus = HAL::I2CSlave::GetInstance(HAL::I2CSlave::I2C_SLAVE0);
+		this->bus = HAL::Serial::GetInstance(HAL::Serial::SERIAL0);
 
 		this->bus->DataReceived += _onDataReceived;
-		this->bus->DataRequest += _onDataRequested;
-		this->bus->ErrorOccurred += _onError;
+//		this->bus->DataRequest += _onDataRequested;
+//		this->bus->ErrorOccurred += _onError;
 
 		// Create event
 		_eventHandle = xEventGroupCreate();
@@ -102,7 +106,7 @@ namespace Communication
 		// Create Communication task
 		xTaskCreate((TaskFunction_t)_taskHandler,
 					"Communication Task",
-					128,
+					512,
 					(void*)this,
 					configMAX_PRIORITIES - 1u,		// Communication must be higher priority task to avoid bus overrun
 					&_taskHandle);
@@ -116,12 +120,12 @@ namespace Communication
 
 		if(rval == NO_ERROR)
 		{
-			rval = msg->Encode(&this->frame);
+//			rval = msg->Encode(&this->frame);
 		}
 
 		if(rval == NO_ERROR)
 		{
-			rval = this->bus->Write(&this->frame);
+//			rval = this->bus->Write(&this->frame);
 		}
 
 		return rval;
@@ -135,6 +139,7 @@ namespace Communication
 	void CommunicationHandler::TaskHandler(void)
 	{
 		EventBits_t events = 0u;
+		uint8_t data = 0u;
 
 		while(1)
 		{
@@ -145,34 +150,26 @@ namespace Communication
 										 pdFALSE,
 										 portMAX_DELAY);
 
-			if( ((events & COM_EVENT_DATA_RECEIVED) == COM_EVENT_DATA_RECEIVED) ||
-				((events & COM_EVENT_DATA_REQUESTED) == COM_EVENT_DATA_REQUESTED) )
+			if((events & COM_EVENT_DATA_RECEIVED) == COM_EVENT_DATA_RECEIVED)
 			{
-				// Get I2C frame
 				if(this->error == NO_ERROR)
 				{
-					this->error = this->bus->Read(&this->frame);
-				}
+					data = this->bus->Read();
 
-				// Decode message
-				if(this->error == NO_ERROR)
-				{
-					this->error = this->msg.Decode(&this->frame);
+					if(data == COM_SOF)
+					{
+						this->buffer.wrIndex = 0u;
+					}
+					else if(data == COM_EOF)
+					{
+						this->msg.Decode(this->buffer.data, this->buffer.wrIndex);
+						this->MessageReceived();
+					}
+					else
+					{
+						this->buffer.data[this->buffer.wrIndex++] = data;
+					}
 				}
-
-				// Notify
-				if(this->error == NO_ERROR)
-				{
-					this->MessageReceived();
-				}
-				else
-				{
-					this->ErrorOccured();
-				}
-			}
-			else if((events & COM_EVENT_ERROR_OCCURED) == COM_EVENT_ERROR_OCCURED)
-			{
-				this->bus->Read(&this->frame);
 			}
 		}
 	}

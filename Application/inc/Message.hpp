@@ -48,7 +48,7 @@ typedef enum
 	MSG_TYPE_PROP_SET_ANGLE			=	0x15,
 	MSG_TYPE_PROP_SET_POSITION		=	0x16,
 	MSG_TYPE_PROP_STOP				=	0x17,
-	MSG_TYPE_PROP_SET_POS_CONTROL	=	0x18,
+	MSG_TYPE_PROP_SET_STATE			=	0x18,
 	MSG_TYPE_PROP_GET_STATUS		=	0x19,
 
 	// Servo messages
@@ -413,14 +413,14 @@ namespace Communication
 		 * @param frame : Encoded I2C frame
 		 * @return 0 if no error, < 0 else
 		 */
-		int32_t	Encode (I2C_FRAME * frame);
+		int32_t	Encode (uint8_t* data, uint8_t length);
 
 		/**
 		 * @brief Decode message
 		 * @param frame : Received I2C frame
 		 * @return 0 if no error, < 0 else
 		 */
-		int32_t Decode (I2C_FRAME * frame);
+		int32_t Decode (uint8_t* data, uint8_t length);
 
 		/**
 		 * @brief Current message type
@@ -434,9 +434,9 @@ namespace Communication
 
 	private :
 
-		int32_t GetType (I2C_FRAME * frame);
+		int32_t GetType (uint8_t* data, uint8_t length);
 
-		int32_t GetParam (I2C_FRAME * frame);
+		int32_t GetParam (uint8_t* data, uint8_t length);
 	};
 }
 

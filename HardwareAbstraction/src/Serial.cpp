@@ -15,6 +15,7 @@
 #include <string.h>
 #include "Serial.hpp"
 #include "common.h"
+#include "FreeRTOS.h"
 
 using namespace std;
 using namespace HAL;
@@ -36,10 +37,10 @@ using namespace HAL;
 #define SERIAL0_TX_PIN			(GPIO_Pin_9)
 #define SERIAL0_TX_PINSOURCE	(GPIO_PinSource9)
 #define SERIAL0_IO_AF			(GPIO_AF_USART1)
-#define SERIAL0_BAUDRATE		(115200u)
+#define SERIAL0_BAUDRATE		(19200u)
 #define SERIAL0_PORT			(USART1)
 #define SERIAL0_INT_CHANNEL		(USART1_IRQn)
-#define SERIAL0_INT_PRIORTY		(1u)
+#define SERIAL0_INT_PRIORTY		(7u)
 
 // UART3
 #define SERIAL1_RX_PORT			(GPIOB)
@@ -169,7 +170,7 @@ static void _hardwareInit (enum Serial::ID id)
 
 	USART_Init(serial.USART.PORT, &UARTStruct);
 
-//	USART_ITConfig(serial.USART.PORT, USART_IT_RXNE, ENABLE);
+	USART_ITConfig(serial.USART.PORT, USART_IT_RXNE, ENABLE);
 	//USART_ITConfig(serial.USART.PORT, USART_IT_TXE, ENABLE);
 
 	//NVIC Init
@@ -178,7 +179,7 @@ static void _hardwareInit (enum Serial::ID id)
 	NVICStruct.NVIC_IRQChannelPreemptionPriority	=	serial.INT.PRIORITY;
 	NVICStruct.NVIC_IRQChannel						=	serial.INT.CHANNEL;
 
-//	NVIC_Init(&NVICStruct);
+	NVIC_Init(&NVICStruct);
 }
 
 /*----------------------------------------------------------------------------*/
@@ -415,7 +416,7 @@ extern "C"
 	{
 		Serial* serial = Serial::GetInstance(Serial::SERIAL0);
 
-		if(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == SET)
+		/*if(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == SET)
 		{
 			serial->INTERNAL_InterruptCallback(USART_FLAG_TXE);
 		}
@@ -425,7 +426,7 @@ extern "C"
 
 			serial->INTERNAL_InterruptCallback(USART_FLAG_TC);
 		}
-		else if(USART_GetFlagStatus(USART1, USART_FLAG_RXNE) == SET)
+		else */if(USART_GetFlagStatus(USART1, USART_FLAG_RXNE) == SET)
 		{
 			USART_ClearFlag(USART1, USART_FLAG_RXNE);
 
@@ -462,11 +463,11 @@ extern "C"
 /*----------------------------------------------------------------------------*/
 /* ReRoute stdout                                                             */
 /*----------------------------------------------------------------------------*/
-
 extern "C"
 {
 	int _read (int file, char *ptr, int len)
 	{
+#if 0
 		int DataIdx;
 
 		if (len == 0)
@@ -482,12 +483,14 @@ extern "C"
 			{}
 			*ptr++ = USART_ReceiveData(USART1);
 		}
+#endif
 
 		return len;
 	}
 
 	int _write(int file, char *ptr, int len)
 	{
+#if 0
 		int DataIdx;
 
 		for (DataIdx = 0; DataIdx < len; DataIdx++)
@@ -497,6 +500,8 @@ extern "C"
 			{}
 			USART_SendData(USART1, (uint8_t) (*ptr++));
 		}
+#endif
 		return len;
 	}
 }
+

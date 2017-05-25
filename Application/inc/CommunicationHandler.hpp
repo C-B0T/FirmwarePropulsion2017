@@ -9,7 +9,8 @@
 #define INC_COMMUNICATIONHANDLER_HPP_
 
 #include "common.h"
-#include "I2CSlave.hpp"
+//#include "I2CSlave.hpp"
+#include "Serial.hpp"
 #include "Message.hpp"
 #include "Event.hpp"
 
@@ -96,13 +97,20 @@ namespace Communication
 		 * @private
 		 * @brief Current frame
 		 */
-		I2C_FRAME frame;
+		//I2C_FRAME frame;
+		struct Buffer
+		{
+			uint8_t wrIndex;
+			uint8_t rdIndex;
+			uint8_t data[256];
+		}buffer;
 
 		/**
 		 * @private
 		 * @brief I2C bus
 		 */
-		HAL::I2CSlave * bus;
+		//HAL::I2CSlave * bus;
+		HAL::Serial* bus;
 	};
 }
 

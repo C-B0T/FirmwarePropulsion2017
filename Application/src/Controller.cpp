@@ -42,7 +42,7 @@ static void _onMessageReceive (void * obj)
 {
 	BaseType_t xHigherPriorityTaskWoken = pdFALSE;
 
-	xEventGroupSetBitsFromISR(_eventHandle, CONTROLLER_EVENT_MSG_RECEIVED, &xHigherPriorityTaskWoken);
+	xEventGroupSetBits(_eventHandle, CONTROLLER_EVENT_MSG_RECEIVED);//, &xHigherPriorityTaskWoken);
 }
 
 static void _onMessageError (void * obj)

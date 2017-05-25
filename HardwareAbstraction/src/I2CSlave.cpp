@@ -33,7 +33,7 @@ using namespace HAL;
 #define I2C0_INT_ERROR_CHANNEL	(I2C3_ER_IRQn)
 #define I2C0_INT_PRIORITY		(8u)
 
-#define I2C_TIMEOUT				(0xFFFFu)
+#define I2C_TIMEOUT				(0xFFFFFFFFu)
 
 #define I2C_EVENT_START_OK							(I2C_EVENT_MASTER_MODE_SELECT)
 #define I2C_EVENT_SLAVE_ACK_ADDR_READY_TO_TRANSMIT	(I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED)
@@ -264,7 +264,7 @@ namespace HAL
 					// If last byte, transmit CRC
 					if(i == frame->Length)
 					{
-						I2C_TransmitPEC(this->def.I2C.BUS, ENABLE);
+//						I2C_TransmitPEC(this->def.I2C.BUS, ENABLE);
 
 						// Wait NAK
 						_waitEvent(this->def.I2C.BUS, I2C_EVENT_SLAVE_ACK_FAILURE);
@@ -326,8 +326,8 @@ namespace HAL
 				this->buffer.frame[this->buffer.wrIndex].Type 	=	(I2C_GetFlagStatus(this->def.I2C.BUS, I2C_FLAG_TRA) == SET ? I2C_FRAME_TYPE_READ : I2C_FRAME_TYPE_WRITE);
 				this->buffer.frame[this->buffer.wrIndex].Length = 	0u;
 
-				this->prevCRC = 0u;
-				this->curCRC = I2C_GetPEC(this->def.I2C.BUS);
+//				this->prevCRC = 0u;
+//				this->curCRC = I2C_GetPEC(this->def.I2C.BUS);
 
 				if(this->buffer.frame[this->buffer.wrIndex].Type == I2C_FRAME_TYPE_READ)
 				{
@@ -357,8 +357,8 @@ namespace HAL
 
 				this->buffer.frame[this->buffer.wrIndex].Length++;
 
-				this->prevCRC = this->curCRC;
-				this->curCRC = I2C_GetPEC(this->def.I2C.BUS);
+//				this->prevCRC = this->curCRC;
+//				this->curCRC = I2C_GetPEC(this->def.I2C.BUS);
 			}
 			else
 			{
@@ -370,7 +370,7 @@ namespace HAL
 		case I2C_FLAG_STOPF:
 			if(this->buffer.wrIndex < (I2C_MAX_BUFFER_SIZE - 1u))
 			{
-				this->buffer.frame[this->buffer.wrIndex].CRCval = this->prevCRC;
+//				this->buffer.frame[this->buffer.wrIndex].CRCval = this->prevCRC;
 				this->buffer.wrIndex++;
 
 				this->error = NO_ERROR;
