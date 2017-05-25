@@ -12,6 +12,7 @@
 #include "Message.hpp"
 #include <string>
 #include <stdlib.h>
+#include <stdio.h>
 
 /*----------------------------------------------------------------------------*/
 /* Definitions                                                                */
@@ -178,73 +179,93 @@ static void _decode_Prop_GotoXY (std::string s, MSG_PARAM * param)
 	assert(param != NULL);
 
 	param->Prop.GotoXY.posX		 =	(uint16_t)(atoi(s.c_str()));
-	param->Prop.GotoXY.posX		|=	((uint16_t)(atoi(s.c_str()) << 8u);
-	param->Prop.GotoXY.posY		 =	(uint16_t)frame->Data[MSG_FRAME_INDEX_FIRST_DATA + 2u];
-	param->Prop.GotoXY.posY		|=	((uint16_t)frame->Data[MSG_FRAME_INDEX_FIRST_DATA + 3u] << 8u);
+	s.erase(0,4);
+	param->Prop.GotoXY.posX		|=	((uint16_t)(atoi(s.c_str()) << 8u));
+	s.erase(0,4);
+	param->Prop.GotoXY.posY		 =	(uint16_t)(atoi(s.c_str()));
+	s.erase(0,4);
+	param->Prop.GotoXY.posY		|=	((uint16_t)(atoi(s.c_str()) << 8u));
+	s.erase(0,4);
 }
 
 static void _decode_Prop_GotoLinear (std::string s, MSG_PARAM * param)
 {
 	assert(param != NULL);
 
-//	param->Prop.GoLinear.distance		 =	(uint16_t)frame->Data[MSG_FRAME_INDEX_FIRST_DATA];
-//	param->Prop.GoLinear.distance		|=	((uint16_t)frame->Data[MSG_FRAME_INDEX_FIRST_DATA + 1u] << 8u);
+	param->Prop.GoLinear.distance		 =	(uint16_t)(atoi(s.c_str()));
+	s.erase(0,4);
+	param->Prop.GoLinear.distance		|=	((uint16_t)(atoi(s.c_str()) << 8u));
+	s.erase(0,4);
 }
 
 static void _decode_Prop_Rotate (std::string s, MSG_PARAM * param)
 {
 	assert(param != NULL);
 
-//	param->Prop.Rotate.angle 		 =	(uint16_t)frame->Data[MSG_FRAME_INDEX_FIRST_DATA];
-//	param->Prop.Rotate.angle		|=	((uint16_t)frame->Data[MSG_FRAME_INDEX_FIRST_DATA + 1u] << 8u);
+	param->Prop.Rotate.angle 		 =	(uint16_t)(atoi(s.c_str()));
+	s.erase(0,4);
+	param->Prop.Rotate.angle		|=	((uint16_t)(atoi(s.c_str()) << 8u));
+	s.erase(0,4);
 }
 
 static void _decode_Prop_SetAngle (std::string s, MSG_PARAM * param)
 {
 	assert(param != NULL);
 
-//	param->Prop.SetAngle.angle	 =	(uint16_t)frame->Data[MSG_FRAME_INDEX_FIRST_DATA];
-//	param->Prop.SetAngle.angle	|=	((uint16_t)frame->Data[MSG_FRAME_INDEX_FIRST_DATA + 1u] << 8u);
+	param->Prop.SetAngle.angle	 =	(uint16_t)(atoi(s.c_str()));
+	s.erase(0,4);
+	param->Prop.SetAngle.angle	|=	((uint16_t)(atoi(s.c_str()) << 8u));
+	s.erase(0,4);
 }
 
 static void _decode_Prop_SetPosition (std::string s, MSG_PARAM * param)
 {
 	assert(param != NULL);
 
-//	param->Prop.SetPosition.posX	 =	(uint16_t)frame->Data[MSG_FRAME_INDEX_FIRST_DATA];
-//	param->Prop.SetPosition.posX	|=	((uint16_t)frame->Data[MSG_FRAME_INDEX_FIRST_DATA + 1u] << 8u);
-//	param->Prop.SetPosition.posY	 =	(uint16_t)frame->Data[MSG_FRAME_INDEX_FIRST_DATA + 2u];
-//	param->Prop.SetPosition.posY	|=	((uint16_t)frame->Data[MSG_FRAME_INDEX_FIRST_DATA + 3u] << 8u);
+	param->Prop.SetPosition.posX	 =	(uint16_t)(atoi(s.c_str()));
+	s.erase(0,4);
+	param->Prop.SetPosition.posX	|=	((uint16_t)(atoi(s.c_str()) << 8u));
+	s.erase(0,4);
+	param->Prop.SetPosition.posY	 =	(uint16_t)(atoi(s.c_str()));
+	s.erase(0,4);
+	param->Prop.SetPosition.posY	|=	((uint16_t)(atoi(s.c_str()) << 8u));
+	s.erase(0,4);
 }
 
 static void _decode_Prop_Stop (std::string s, MSG_PARAM * param)
 {
 	assert(param != NULL);
 
-//	param->Prop.Stop.mode	 =	(uint16_t)frame->Data[MSG_FRAME_INDEX_FIRST_DATA];
+	param->Prop.Stop.mode	 =	(uint8_t)(atoi(s.c_str()));
+	s.erase(0,4);
 }
 
 static void _decode_Prop_SetState (std::string s, MSG_PARAM * param)
 {
 	assert(param != NULL);
 
-//	param->Prop.SetState.state	 =	(uint16_t)frame->Data[MSG_FRAME_INDEX_FIRST_DATA];
+	param->Prop.SetState.state	 =	(uint8_t)(atoi(s.c_str()));
+	s.erase(0,4);
 }
 
 static void _decode_Servo_Init (std::string s, MSG_PARAM * param)
 {
 	assert(param != NULL);
 
-//	param->Servo.Init.id	 =	(uint16_t)frame->Data[MSG_FRAME_INDEX_FIRST_DATA];
+	param->Servo.Init.id	 =	(uint8_t)(atoi(s.c_str()));
+	s.erase(0,4);
 }
 
 static void _decode_Servo_SetAngle (std::string s, MSG_PARAM * param)
 {
 	assert(param != NULL);
 
-//	param->Servo.SetAngle.ID	 =	(uint16_t)frame->Data[MSG_FRAME_INDEX_FIRST_DATA];
-//	param->Servo.SetAngle.angle	 =	(uint16_t)frame->Data[MSG_FRAME_INDEX_FIRST_DATA + 1u];
-//	param->Servo.SetAngle.angle	|=	((uint16_t)frame->Data[MSG_FRAME_INDEX_FIRST_DATA + 2u] << 8u);
+	param->Servo.SetAngle.ID	 =	(uint8_t)(atoi(s.c_str()));
+	s.erase(0,4);
+	param->Servo.SetAngle.angle	 =	(uint16_t)(atoi(s.c_str()));
+	s.erase(0,4);
+	param->Servo.SetAngle.angle	|=	((uint16_t)(atoi(s.c_str()) << 8u));
+	s.erase(0,4);
 }
 
 
@@ -252,92 +273,112 @@ static void _decode_Servo_SetSpeed (std::string s, MSG_PARAM * param)
 {
 	assert(param != NULL);
 
-//	param->Servo.SetSpeed.ID	 =	(uint16_t)frame->Data[MSG_FRAME_INDEX_FIRST_DATA];
-//	param->Servo.SetSpeed.speed	 =	(uint16_t)frame->Data[MSG_FRAME_INDEX_FIRST_DATA + 1u];
-//	param->Servo.SetSpeed.speed	|=	((uint16_t)frame->Data[MSG_FRAME_INDEX_FIRST_DATA + 2u] << 8u);
+	param->Servo.SetSpeed.ID	 =	(uint8_t)(atoi(s.c_str()));
+	s.erase(0,4);
+	param->Servo.SetSpeed.speed	 =	(uint16_t)(atoi(s.c_str()));
+	s.erase(0,4);
+	param->Servo.SetSpeed.speed	|=	((uint16_t)(atoi(s.c_str()) << 8u));
+	s.erase(0,4);
 }
 
 static void _decode_MPP_Init (std::string s, MSG_PARAM * param)
 {
 	assert(param != NULL);
 
-//	param->MPP.Init.id	 =	(uint16_t)frame->Data[MSG_FRAME_INDEX_FIRST_DATA];
+	param->MPP.Init.id	 =	(uint8_t)(atoi(s.c_str()));
+	s.erase(0,4);
 }
 
 static void _decode_MPP_SetSpeed (std::string s, MSG_PARAM * param)
 {
 	assert(param != NULL);
 
-//	param->MPP.SetSpeed.ID	 	=	(uint16_t)frame->Data[MSG_FRAME_INDEX_FIRST_DATA];
-//	param->MPP.SetSpeed.speed	=	(uint16_t)frame->Data[MSG_FRAME_INDEX_FIRST_DATA + 1u];
-//	param->MPP.SetSpeed.speed   |=	((uint16_t)frame->Data[MSG_FRAME_INDEX_FIRST_DATA + 2u] << 8u);
+	param->MPP.SetSpeed.ID	 	=	(uint8_t)(atoi(s.c_str()));
+	s.erase(0,4);
+	param->MPP.SetSpeed.speed	=	(uint16_t)(atoi(s.c_str()));
+	s.erase(0,4);
+	param->MPP.SetSpeed.speed   |=	((uint16_t)(atoi(s.c_str()) << 8u));
+	s.erase(0,4);
 }
 
 static void _decode_MPP_SetState (std::string s, MSG_PARAM * param)
 {
 	assert(param != NULL);
 
-//	param->MPP.SetState.ID	 	=	(uint16_t)frame->Data[MSG_FRAME_INDEX_FIRST_DATA];
-//	param->MPP.SetState.state	=	(uint16_t)frame->Data[MSG_FRAME_INDEX_FIRST_DATA + 1u];
+	param->MPP.SetState.ID	 	=	(uint8_t)(atoi(s.c_str()));
+	s.erase(0,4);
+	param->MPP.SetState.state	=	(uint8_t)(atoi(s.c_str()));
+	s.erase(0,4);
 }
 
 static void _decode_MPP_Move (std::string s, MSG_PARAM * param)
 {
 	assert(param != NULL);
 
-//	param->MPP.Move.ID	 		=	(uint16_t)frame->Data[MSG_FRAME_INDEX_FIRST_DATA];
-//	param->MPP.Move.direction	=	(uint16_t)frame->Data[MSG_FRAME_INDEX_FIRST_DATA + 1u];
-//	param->MPP.Move.nbSteps		=	(uint16_t)frame->Data[MSG_FRAME_INDEX_FIRST_DATA + 2u];
-//	param->MPP.Move.nbSteps    |=	((uint16_t)frame->Data[MSG_FRAME_INDEX_FIRST_DATA + 3u] << 8u);
+	param->MPP.Move.ID	 		=	(uint8_t)(atoi(s.c_str()));
+	s.erase(0,4);
+	param->MPP.Move.direction	=	(uint8_t)(atoi(s.c_str()));
+	s.erase(0,4);
+	param->MPP.Move.nbSteps		=	(uint16_t)(atoi(s.c_str()));
+	s.erase(0,4);
+	param->MPP.Move.nbSteps    |=	((uint16_t)(atoi(s.c_str()) << 8u));
+	s.erase(0,4);
 }
 
 static void _decode_MPP_Run (std::string s, MSG_PARAM * param)
 {
 	assert(param != NULL);
 
-//	param->MPP.Run.ID	 		=	(uint16_t)frame->Data[MSG_FRAME_INDEX_FIRST_DATA];
-//	param->MPP.Run.direction	=	(uint16_t)frame->Data[MSG_FRAME_INDEX_FIRST_DATA + 1u];
+	param->MPP.Run.ID	 		=	(uint8_t)(atoi(s.c_str()));
+	s.erase(0,4);
+	param->MPP.Run.direction	=	(uint8_t)(atoi(s.c_str()));
+	s.erase(0,4);
 }
 
 static void _decode_GPIO_Init (std::string s, MSG_PARAM * param)
 {
 	assert(param != NULL);
 
-//	param->GPIO.Init.id	 =	(uint16_t)frame->Data[MSG_FRAME_INDEX_FIRST_DATA];
+	param->GPIO.Init.id	 =	(uint8_t)(atoi(s.c_str()));
+	s.erase(0,4);
 }
 
 static void _decode_GPIO_SetOutput (std::string s, MSG_PARAM * param)
 {
 	assert(param != NULL);
 
-//	param->GPIO.SetOutput.id	 =	(uint16_t)frame->Data[MSG_FRAME_INDEX_FIRST_DATA];
-//	param->GPIO.SetOutput.state	 =	(uint16_t)frame->Data[MSG_FRAME_INDEX_FIRST_DATA + 1u];
+	param->GPIO.SetOutput.id	 =	(uint8_t)(atoi(s.c_str()));
+	s.erase(0,4);
+	param->GPIO.SetOutput.state	 =	(uint8_t)(atoi(s.c_str()));
+	s.erase(0,4);
 }
 
 static void _decode_BAR_Init (std::string s, MSG_PARAM * param)
 {
 	assert(param != NULL);
 
-//	param->Barillet.Init.id	 =	(uint16_t)frame->Data[MSG_FRAME_INDEX_FIRST_DATA];
-//	param->Barillet.MoveIndex.index	 =	(uint16_t)frame->Data[MSG_FRAME_INDEX_FIRST_DATA + 1u];
+	param->Barillet.Init.id	 =	(uint8_t)(atoi(s.c_str()));
+	s.erase(0,4);
 }
 
 static void _decode_BAR_MoveIndex (std::string s, MSG_PARAM * param)
 {
 	assert(param != NULL);
 
-//	param->Barillet.MoveIndex.id	 =	(uint16_t)frame->Data[MSG_FRAME_INDEX_FIRST_DATA];
-//	param->Barillet.MoveIndex.index	 =	(uint16_t)frame->Data[MSG_FRAME_INDEX_FIRST_DATA + 1u];
+	param->Barillet.MoveIndex.id	 =	(uint8_t)(atoi(s.c_str()));
+	s.erase(0,4);
+	param->Barillet.MoveIndex.index	 =	(uint8_t)(atoi(s.c_str()));
+	s.erase(0,4);
 }
 
-static void _encode_Ping (std::string s, MSG_PARAM * param)
+static std::string _encode_Ping (MSG_PARAM * param)
 {
 	assert(param != NULL);
 
-//	frame->Data[frame->Length++]	=	(uint8_t)(param->Ping.key & 0x000000FFu);
-//	frame->Data[frame->Length++]	=	(uint8_t)((param->Ping.key >> 8u) & 0x000000FFu);
-//	frame->Data[frame->Length++]	=	(uint8_t)((param->Ping.key >> 16u) & 0x000000FFu);
-//	frame->Data[frame->Length++]	=	(uint8_t)((param->Ping.key >> 24u) & 0x000000FFu);
+	std::string s(MSG_OPCODE_FW_PING);
+	s.append(",04,170,085,165,090");
+
+	return s;
 }
 
 static void _encode_Checkup(std::string s, MSG_PARAM * param)
@@ -353,26 +394,50 @@ static void _encode_GetDistance (std::string s, MSG_PARAM * param)
 //	frame->Data[frame->Length++]	=	param->GetDistance.status;
 }
 
-static void _encode_Prop_GetPosition (std::string s, MSG_PARAM * param)
+static std::string _encode_Prop_GetPosition (MSG_PARAM * param)
 {
-//	frame->Data[frame->Length++]	=	(uint8_t)(param->Prop.GetPosition.posX & 0x00FFu);
-//	frame->Data[frame->Length++]	=	(uint8_t)((param->Prop.GetPosition.posX >> 8u) & 0x00FFu);
-//	frame->Data[frame->Length++]	=	(uint8_t)(param->Prop.GetPosition.posY & 0x00FFu);
-//	frame->Data[frame->Length++]	=	(uint8_t)((param->Prop.GetPosition.posY >> 8u) & 0x00FFu);
-//	frame->Data[frame->Length++]	=	(uint8_t)(param->Prop.GetPosition.angle & 0x00FFu);
-//	frame->Data[frame->Length++]	=	(uint8_t)((param->Prop.GetPosition.angle >> 8u) & 0x00FFu);
+	char buffer[32];
+
+	assert(param != NULL);
+
+	std::string s(MSG_OPCODE_PROP_GETPOSITION);
+
+	sprintf(buffer, "04,%03d,%03d,%03d,%03d,%03d,%03d", (uint8_t)(param->Prop.GetPosition.posX & 0xFFu),
+														((uint8_t)(param->Prop.GetPosition.posX >> 8u) & 0xFFu),
+														(uint8_t)(param->Prop.GetPosition.posY & 0xFFu),
+														((uint8_t)(param->Prop.GetPosition.posY >> 8u) & 0xFFu),
+														(uint8_t)(param->Prop.GetPosition.angle & 0xFFu),
+														((uint8_t)(param->Prop.GetPosition.angle >> 8u) & 0xFFu));
+
+	return s;
 }
 
-static void _encode_Prop_GetStatus (std::string s, MSG_PARAM * param)
+static std::string _encode_Prop_GetStatus (MSG_PARAM * param)
 {
-//	frame->Data[frame->Length++]	=	(uint8_t)(param->Prop.GetStatus.status & 0x00FFu);
-//	frame->Data[frame->Length++]	=	(uint8_t)((param->Prop.GetStatus.status >> 8u) & 0x00FFu);
+	char buffer[32];
+
+	assert(param != NULL);
+
+	std::string s(MSG_OPCODE_PROP_GETSTATUS);
+
+	sprintf(buffer, "04,%03d,%03d", (uint8_t)(param->Prop.GetStatus.status & 0xFFu),
+														((uint8_t)(param->Prop.GetStatus.status >> 8u) & 0xFFu));
+
+	return s;
 }
 
-static void _encode_Servo_GetStatus (std::string s, MSG_PARAM * param)
+static std::string _encode_Servo_GetStatus (MSG_PARAM * param)
 {
-//	frame->Data[frame->Length++]	=	(uint8_t)(param->Servo.GetStatus.status & 0x00FFu);
-//	frame->Data[frame->Length++]	=	(uint8_t)((param->Servo.GetStatus.status >> 8u) & 0x00FFu);
+//	char buffer[32];
+//
+//	assert(param != NULL);
+//
+//	std::string s(MSG_OPCODE_SERVO_GETSTATUS);
+//
+//	sprintf(buffer, "04,%03d,%03d", (uint8_t)(param->Prop.GetStatus.status & 0xFFu),
+//														((uint8_t)(param->Prop.GetStatus.status >> 8u) & 0xFFu));
+//
+//	return s;
 }
 
 static void _encode_MPP_GetStatus (std::string s, MSG_PARAM * param)
